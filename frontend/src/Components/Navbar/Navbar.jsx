@@ -9,7 +9,7 @@ function Navbar() {
 
   return (
     <div className="navbar-container">
-      <h1>Navbar</h1>
+      
       <Link to="/profile" className={navClass('/profile')}>
         <i className="bi bi-person"></i>
       </Link>
