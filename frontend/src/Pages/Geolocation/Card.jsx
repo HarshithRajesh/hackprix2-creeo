@@ -1,20 +1,23 @@
-// Card.jsx
 import React from 'react';
-import './Card.css'; // Assuming you'll add this CSS later
+import './Card.css';
+import { FaFolder } from 'react-icons/fa'; // Make sure you have react-icons installed
 
-const Card = ({ id, name, interests }) => {
+const Card = ({ name, age, interests, pronouns, role }) => {
   return (
     <div className="card">
-      <h2>{name}</h2>
-      <p>ID: {id}</p>
+      <h2>{name}, <span className="age">{age}</span></h2>
       <div className="interests">
-        <h3>Interests:</h3>
-        <ul>
-          {interests.map((interest, index) => (
-            <li key={index}>{interest}</li>
-          ))}
-        </ul>
+        {interests.map((interest, index) => (
+          <span className="interest-tag" key={index}>{interest}</span>
+        ))}
       </div>
+      {pronouns && <div className="pronoun">{pronouns}</div>}
+      {role && (
+        <div className="role">
+          <FaFolder className="role-icon" />
+          {role}
+        </div>
+      )}
     </div>
   );
 };
