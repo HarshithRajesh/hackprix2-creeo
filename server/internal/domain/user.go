@@ -20,7 +20,7 @@ type GeoPoint struct {
 }
 
 type Location struct {
-	ProfileId int      `gorm:"primaryKey;not null"`
+	Id        int      `gorm:"primaryKey;not null"`
 	Location  GeoPoint `gorm:"type:geography(Point,4326);not null"`
 	UpdatedAt time.Time
 }
