@@ -1,3 +1,5 @@
 import Navbar from "./Navbar/Navbar";
 import FeedCard from "./FeedCard/FeedCard";
-export { Navbar, FeedCard };
+import Card from "./Card/Card";
+export { Card,FeedCard, Navbar };
+
