@@ -1,0 +1,64 @@
+.card {
+  background: linear-gradient(to bottom right, #dfe6e9, #b2bec3);
+  border-radius: 16px;
+  padding: 20px;
+  width: 320px;
+  height: 250px;
+  color: #2d3436;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  position: relative;
+  justify-content: space-between;
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.card .age {
+  font-size: 18px;
+  font-weight: 400;
+  color: #636e72;
+}
+
+.card .interests {
+  margin-top: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card .interest-tag {
+  background-color: #ffffffaa;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2d3436;
+  white-space: nowrap;
+}
+
+.card .pronoun {
+  background-color: #dfe6e9;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  margin-top: 10px;
+  display: inline-block;
+  color: #2d3436;
+}
+
+.card .role {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  margin-top: 12px;
+  color: #2d3436;
+}
+
+.card .role-icon {
+  margin-right: 8px;
+  font-size: 18px;
+}

@@ -1,6 +1,6 @@
 // Geolocation.jsx
 import React, { useState, useEffect } from 'react';
-import Card from './Card'; // Import the Card component
+import {Card} from '../../Components'; // Import the Card component
 import './Geolocation.css'; // Assuming you'll add this CSS later
 
 const Geolocation = () => {
@@ -38,7 +38,7 @@ const Geolocation = () => {
       age: 26,
       pronouns: 'they/them',
       role: 'Product Manager at LaunchPad',
-      interests: ['Cycling', 'Painting', 'Gardening'],
+      interests: ['Cycling', 'Painting', 'Gardening', 'Writing'],
     },
   ];
 
@@ -50,7 +50,7 @@ const Geolocation = () => {
 
   return (
     <div className="geolocation-container">
-      <h1>Geolocation</h1>
+      <h1>Nearby People</h1>
       <div className="cards-container">
         {cards.map((card) => (
           <Card
