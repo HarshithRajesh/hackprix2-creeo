@@ -1,0 +1,45 @@
+.menu-page {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  padding: 32px 24px 24px 24px;
+  margin: 0 auto;
+  width: 80vw;
+}
+
+.menu-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #333;
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.menu-card {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  background: #f3f6fa;
+  border-radius: 12px;
+  padding: 16px 18px;
+  font-size: 1.1rem;
+  color: #444;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+
+.menu-card i {
+  font-size: 1.3rem;
+  color: #6c63ff;
+}
+
+.menu-card:hover {
+  background: #e6e9f5;
+  box-shadow: 0 2px 8px rgba(108,99,255,0.08);
+}
