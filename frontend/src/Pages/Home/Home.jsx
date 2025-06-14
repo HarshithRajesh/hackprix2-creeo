@@ -1,7 +1,7 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import './Home.css';
 import {FeedCard} from '../../Components'; 
-
+import {healthService} from '../../Service/api'; 
 const posts = [
   {
     user: 'Sally',
@@ -40,6 +40,19 @@ const posts = [
 ];
 
 const Home = () => {
+  useEffect(() => {
+    const checkHealth = async () => {
+     try {
+        const data = await healthService.checkHealth();
+        console.log('Health check response:', data);
+      } catch (error) {
+        console.error('Error checking health:', error);
+      }
+    };
+
+    checkHealth();
+  }, []);
+
   return (
     <div className="chat-page">
       <h2 className="chat-title">CREEO</h2>
