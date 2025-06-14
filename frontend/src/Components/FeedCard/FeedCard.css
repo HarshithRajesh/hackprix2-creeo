@@ -1,0 +1,100 @@
+.feed-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s ease;
+   width: 100%;
+  max-width: 500px; /* Optional */
+  margin: 0 auto;
+}
+
+
+.feed-card:hover {
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 500;
+}
+
+.feed-user {
+  font-weight: bold;
+  color: #222;
+}
+
+.feed-time {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.feed-text {
+  margin: 12px 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.feed-slider {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  gap: 8px;
+  margin-top: 12px;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+}
+
+.feed-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.feed-slider img {
+  flex: 0 0 auto;
+  width: 220px; /* Adjust width as needed */
+  scroll-snap-align: start;
+  object-fit: cover;
+  height: 240px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.feed-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #777;
+  margin-top: 12px;
+}
+
+.like-icon {
+  cursor: pointer;
+  color: black;
+  border: 1px solid black;
+  padding: 4px 8px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: white;
+}
+
+.like-icon.liked {
+  background-color: #e0245e;
+  color: white;
+  border: 1px solid #e0245e;
+}
+
+.like-icon i {
+  margin-right: 4px;
+}
