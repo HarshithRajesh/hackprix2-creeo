@@ -21,6 +21,7 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/health", health)
-	router.POST("/profile", userHandler.CreateProfile)
+	router.POST("/profile/create", userHandler.CreateProfile)
+	router.GET("/profile", userHandler.GetProfile)
 	router.Run()
 }

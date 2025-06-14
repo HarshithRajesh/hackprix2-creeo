@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/HarshithRajesh/creeo/internal/domain"
 	"github.com/HarshithRajesh/creeo/internal/service"
@@ -28,4 +29,19 @@ func (h *UserHandler) CreateProfile(c *gin.Context) {
 		return
 	}
 	c.JSON(200, gin.H{"message": "Profile created Successfully !!!"})
+}
+
+func (h *UserHandler) GetProfile(c *gin.Context) {
+	idStr := c.Query("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "id didnt get converted to int", "Error message": err.Error()})
+		return
+	}
+	prof, err := h.userService.GetProfile(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "didnt fetch the profile", "Error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"message": prof})
 }

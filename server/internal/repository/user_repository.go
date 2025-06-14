@@ -9,7 +9,7 @@ import (
 
 type UserRepository interface {
 	CreateProfile(profile *domain.Profile) error
-	// GetProfile(profile *domain.Profile) error
+	GetProfile(id int) (*domain.Profile, error)
 	GetProfileByEmail(email string) (*domain.Profile, error)
 }
 
@@ -32,8 +32,19 @@ func (r *userRepository) CreateProfile(profile *domain.Profile) error {
 	return nil
 }
 
-// func (r *userRepository) GetProfile(profile *domain.Profile) error {
-// }
+func (r *userRepository) GetProfile(id int) (*domain.Profile, error) {
+	var prof domain.Profile
+	query := `SELECT id,name,interests FROM profiles WHERE id=$1`
+	row := r.db.QueryRow(query, id)
+	err := row.Scan(&prof.Id, &prof.Name, &prof.Interests)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("Profile not found")
+		}
+		return nil, errors.New("Failed to fetch the profile details" + err.Error())
+	}
+	return &prof, nil
+}
 
 func (r *userRepository) GetProfileByEmail(email string) (*domain.Profile, error) {
 	var prof domain.Profile

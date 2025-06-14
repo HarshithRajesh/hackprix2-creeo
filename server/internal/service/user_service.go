@@ -9,6 +9,7 @@ import (
 
 type UserService interface {
 	CreateProfile(profile *domain.Profile) error
+	GetProfile(id int) (*domain.Profile, error)
 }
 
 type userService struct {
@@ -25,4 +26,13 @@ func (s *userService) CreateProfile(profile *domain.Profile) error {
 		return errors.New("Profile already exists")
 	}
 	return s.repo.CreateProfile(profile)
+}
+
+func (s *userService) GetProfile(id int) (*domain.Profile, error) {
+	var prof *domain.Profile
+	prof, err := s.repo.GetProfile(id)
+	if err != nil {
+		return nil, errors.New("Profile not exists")
+	}
+	return prof, nil
 }
