@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/HarshithRajesh/creeo/internal/domain"
@@ -73,7 +74,9 @@ func (r *userRepository) Location(loc *domain.Location) error {
             location = EXCLUDED.location,
             updated_at = EXCLUDED.updated_at;
               `
-	_, err := r.db.Exec(query, &loc.ProfileId, pointWKT, time.Now())
+	id := loc.Id
+	log.Println(id, pointWKT)
+	_, err := r.db.Exec(query, loc.Id, pointWKT, time.Now())
 	if err != nil {
 		return errors.New("failed to update geolocation" + err.Error())
 	}
