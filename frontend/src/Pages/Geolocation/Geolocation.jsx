@@ -8,11 +8,40 @@ const Geolocation = () => {
 
   // Dummy data
   const dummyData = [
-    { id: 1, name: 'Varun', interests: ['Hiking', 'Photography', 'Coding'] },
-    { id: 2, name: 'Alice', interests: ['Reading', 'Traveling', 'Cooking'] },
-    { id: 3, name: 'Bob', interests: ['Fishing', 'Gaming', 'Music'] },
-    { id: 4, name: 'Charlie', interests: ['Cycling', 'Painting', 'Gardening'] },
+    {
+      id: 1,
+      name: 'Varun',
+      age: 24,
+      pronouns: 'he/him',
+      role: 'Software Engineer at DevCorp',
+      interests: ['Hiking', 'Photography', 'Coding'],
+    },
+    {
+      id: 2,
+      name: 'Alice',
+      age: 27,
+      pronouns: 'she/her',
+      role: 'UX Designer at Creatives',
+      interests: ['Reading', 'Traveling', 'Cooking'],
+    },
+    {
+      id: 3,
+      name: 'Bob',
+      age: 30,
+      pronouns: 'he/him',
+      role: 'Data Analyst at Insight Inc',
+      interests: ['Fishing', 'Gaming', 'Music'],
+    },
+    {
+      id: 4,
+      name: 'Charlie',
+      age: 26,
+      pronouns: 'they/them',
+      role: 'Product Manager at LaunchPad',
+      interests: ['Cycling', 'Painting', 'Gardening'],
+    },
   ];
+
 
   // Simulate fetching data from backend
   useEffect(() => {
@@ -24,9 +53,17 @@ const Geolocation = () => {
       <h1>Geolocation</h1>
       <div className="cards-container">
         {cards.map((card) => (
-          <Card key={card.id} id={card.id} name={card.name} interests={card.interests} />
+          <Card
+            key={card.id}
+            name={card.name}
+            age={card.age}
+            interests={card.interests}
+            pronouns={card.pronouns}
+            role={card.role}
+          />
         ))}
       </div>
+
     </div>
   );
 };
