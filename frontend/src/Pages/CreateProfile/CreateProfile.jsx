@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ProfileInput } from "../../Components";
+import { useNavigate } from 'react-router-dom'
 import "./CreateProfile.css";
 import "../../Components/Card/Card.css";
 
@@ -63,11 +64,12 @@ const CreateProfile = () => {
   const removeLanguage = (lang) => {
     setSelectedLanguages(selectedLanguages.filter(l => l !== lang));
   };
-
+  const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
     localStorage.setItem("userProfile", JSON.stringify(form));
     alert("Profile saved!");
+    navigate('/');
   };
 
   return (
