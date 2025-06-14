@@ -3,6 +3,7 @@ import { ProfileInput } from "../../Components";
 import { useNavigate } from 'react-router-dom'
 import "./CreateProfile.css";
 import "../../Components/Card/Card.css";
+import { profileService } from '../../Service/api';
 
 const INTERESTS = [
   'music', 'art', 'vibing', 'reading', 'hiking', 'cooking',
@@ -64,13 +65,30 @@ const CreateProfile = () => {
   const removeLanguage = (lang) => {
     setSelectedLanguages(selectedLanguages.filter(l => l !== lang));
   };
+
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    localStorage.setItem("userProfile", JSON.stringify(form));
+    const payload = {
+      ...form,
+      email: form.name.toLowerCase().replace(/\s+/g, '') + '@example.com',
+      password: '123',
+    };
+
+    try {
+      const response = await profileService.createProfile(payload);
+      setMessage('Profile created successfully!');
+      console.log('Profile created:', response);
+      navigate('/');
+    } catch (error) {
+      setMessage('Error creating profile. Please try again.');
+      console.error('Error:', error);
+    }
+
     alert("Profile saved!");
-    navigate('/');
   };
+
 
   return (
     <div className="create-profile-root">
@@ -109,7 +127,7 @@ const CreateProfile = () => {
           {/* Interests and Languages in same row */}
           <div className="profile-row">
             <div className="profile-row-item">
-             
+
               <select className="dropdown" onChange={addInterest} defaultValue="">
                 <option value="" disabled>Add Interest</option>
                 {INTERESTS.filter(i => !selectedInterests.includes(i)).map(interest => (
@@ -118,7 +136,7 @@ const CreateProfile = () => {
               </select>
             </div>
             <div className="profile-row-item">
-              
+
               <select className="dropdown" onChange={addLanguage} defaultValue="">
                 <option value="" disabled>Add Language</option>
                 {LANGUAGES.filter(l => !selectedLanguages.includes(l)).map(lang => (
@@ -159,23 +177,23 @@ const CreateProfile = () => {
           {form.pronouns && <div className="pronoun">{form.pronouns}</div>}
           <p style={{ margin: "0.5rem 0 1rem 0", color: "#636e72" }}>{form.about}</p>
           {/* Interests */}
-           <div className="tag-list">
-                {selectedInterests.map(interest => (
-                  <span className="tag" key={interest}>
-                    {interest}
-                    <span className="tag-remove" onClick={() => removeInterest(interest)}>&times;</span>
-                  </span>
-                ))}
-              </div>
+          <div className="tag-list">
+            {selectedInterests.map(interest => (
+              <span className="tag" key={interest}>
+                {interest}
+                <span className="tag-remove" onClick={() => removeInterest(interest)}>&times;</span>
+              </span>
+            ))}
+          </div>
           {/* Languages */}
           <div className="tag-list">
-                {selectedLanguages.map(lang => (
-                  <span className="tag" key={lang}>
-                    {lang}
-                    <span className="tag-remove" onClick={() => removeLanguage(lang)}>&times;</span>
-                  </span>
-                ))}
-              </div>
+            {selectedLanguages.map(lang => (
+              <span className="tag" key={lang}>
+                {lang}
+                <span className="tag-remove" onClick={() => removeLanguage(lang)}>&times;</span>
+              </span>
+            ))}
+          </div>
           {/* Links */}
           <div style={{ marginTop: "1.2rem", width: "100%" }}>
             <strong>Links:</strong>
