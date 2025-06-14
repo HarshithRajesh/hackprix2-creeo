@@ -66,9 +66,13 @@ func (r *userRepository) GetProfileByEmail(email string) (*domain.Profile, error
 
 func (r *userRepository) Location(loc *domain.Location) error {
 	pointWKT := fmt.Sprintf("SRID=4326;POINT(%f %f)", loc.Location.Lng, loc.Location.Lat)
-	query := `INSERT INTO geolocation (
-            profile_id,location,updated_at)
-            VALUES ($1,ST_GeogFromText($2),$3)`
+	query := `INSERT INTO geolocation (profile_id, location, updated_at)
+            VALUES ($1, ST_GeogFromText($2), $3)
+            ON CONFLICT (profile_id)
+            DO UPDATE SET
+            location = EXCLUDED.location,
+            updated_at = EXCLUDED.updated_at;
+              `
 	_, err := r.db.Exec(query, &loc.ProfileId, pointWKT, time.Now())
 	if err != nil {
 		return errors.New("failed to update geolocation" + err.Error())
