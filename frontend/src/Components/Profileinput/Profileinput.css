@@ -1,0 +1,31 @@
+
+.profile-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.profile-input-label {
+  font-weight: 500;
+  color: #6366f1;
+  margin-bottom: 0.2rem;
+  font-size: 1rem;
+  letter-spacing: 0.2px;
+}
+
+.profile-input-field {
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  border: 1.5px solid #cbd5e1;
+  background: #fff;
+  font-size: 1rem;
+  transition: border 0.2s;
+  width: 100%;
+  outline: none;
+  margin-top: 0.1rem;
+}
+.profile-input-field:focus {
+  border: 1.5px solid #6366f1;
+  background: #f0f4ff;
+}

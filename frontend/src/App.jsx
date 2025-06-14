@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import {Home,Chats,Geolocation,Menu,Profile} from './Pages'
+import {Home,Chats,Geolocation,Menu,Profile,Auth,CreateProfile} from './Pages'
 import { Navbar } from './Components'
 import './App.css'
 import Header from './Components/Header/Header';
@@ -11,6 +11,8 @@ function App() {
       <Header />
 
       <Routes>
+            <Route path="/auth" element={<Auth/>} />
+            <Route path="/create-profile" element={<CreateProfile />} />
             <Route path="/" element={<Home/>} />
             <Route path="/menu" element={<Menu/>} />
             <Route path="/chats" element={<Chats/>} />  
