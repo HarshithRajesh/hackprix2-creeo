@@ -23,5 +23,7 @@ func main() {
 	router.GET("/health", health)
 	router.POST("/profile/create", userHandler.CreateProfile)
 	router.GET("/profile", userHandler.GetProfile)
+	router.POST("/location", userHandler.Location)
+	router.GET("/nearby", userHandler.GetNearbyProfiles)
 	router.Run()
 }

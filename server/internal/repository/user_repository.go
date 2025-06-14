@@ -3,6 +3,8 @@ package repository
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"time"
 
 	"github.com/HarshithRajesh/creeo/internal/domain"
 )
@@ -11,6 +13,8 @@ type UserRepository interface {
 	CreateProfile(profile *domain.Profile) error
 	GetProfile(id int) (*domain.Profile, error)
 	GetProfileByEmail(email string) (*domain.Profile, error)
+	Location(loc *domain.Location) error
+	GetNearbyProfiles(id int, radius int) ([]*domain.ProfileWithLocation, error)
 }
 
 type userRepository struct {
@@ -60,7 +64,61 @@ func (r *userRepository) GetProfileByEmail(email string) (*domain.Profile, error
 	return &prof, nil
 }
 
-//
-// func (r *userRepository) Location (loc *domain.Location) error{
-//
-// }
+func (r *userRepository) Location(loc *domain.Location) error {
+	pointWKT := fmt.Sprintf("SRID=4326;POINT(%f %f)", loc.Location.Lng, loc.Location.Lat)
+	query := `INSERT INTO geolocation (
+            profile_id,location,updated_at)
+            VALUES ($1,ST_GeogFromText($2),$3)`
+	_, err := r.db.Exec(query, &loc.ProfileId, pointWKT, time.Now())
+	if err != nil {
+		return errors.New("failed to update geolocation" + err.Error())
+	}
+	return nil
+}
+
+func (r *userRepository) GetNearbyProfiles(id int, radius int) ([]*domain.ProfileWithLocation, error) {
+	query := `WITH TargetUserLocation AS (
+    SELECT
+        g.location AS target_location
+    FROM geolocation g
+    WHERE g.profile_id = $1
+  )
+  SELECT
+      p.id,
+      p.name,
+      p.email,
+      p.interests,
+      g.updated_at AS location_updated_at, 
+      ST_Y(g.location::geometry) AS latitude,
+      ST_X(g.location::geometry) AS longitude,
+      ST_Distance(g.location, TUL.target_location) AS distance_meters
+  FROM profiles p
+  JOIN geolocation g ON p.id = g.profile_id
+  JOIN TargetUserLocation TUL ON TRUE
+  WHERE
+      p.id != $1 AND 
+      ST_DWithin(g.location, TUL.target_location, $2) 
+  ORDER BY distance_meters;`
+	rows, err := r.db.Query(query, id, radius)
+	if err != nil {
+		return nil, fmt.Errorf("%w: failed to fetch nearby profiles", err.Error())
+	}
+	defer rows.Close()
+	var nearbyprofiles []*domain.ProfileWithLocation
+
+	for rows.Next() {
+		prof := &domain.ProfileWithLocation{}
+		var tempGeo domain.GeoPoint
+
+		if err := rows.Scan(&prof.Id, &prof.Name, &prof.Email, &prof.Interests,
+			&prof.UpdatedAt, &tempGeo.Lat, &tempGeo.Lng, &prof.Distance); err != nil {
+			return nil, fmt.Errorf("failed to scan profiles: %v", err)
+		}
+		prof.Location = tempGeo
+		nearbyprofiles = append(nearbyprofiles, prof)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error encountered during nearby profiles iteration: %v", err)
+	}
+	return nearbyprofiles, nil
+}
