@@ -16,9 +16,9 @@ func init() {
 	}
 }
 
-func ConnectDB() {
-	conn := os.Getenv("DATABASE_URL")
-	db, err := sql.Open("postgre", conn)
+func ConnectDB() *sql.DB {
+	conn := os.Getenv("URL")
+	db, err := sql.Open("postgres", conn)
 	if err != nil {
 		log.Fatalf("Failed to connect to the database %v", err)
 	}

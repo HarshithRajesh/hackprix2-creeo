@@ -1,35 +1,28 @@
-package repository
+package service
 
 import (
-	"database/sql"
 	"errors"
 
-	"github.com/HarshithRajesh/domain"
+	"github.com/HarshithRajesh/creeo/internal/domain"
+	"github.com/HarshithRajesh/creeo/internal/repository"
 )
 
-type UserRepository interface {
+type UserService interface {
 	CreateProfile(profile *domain.Profile) error
-	GetProfile(profile *domain.Profile) error
 }
 
-type userRepository struct {
-	db *sql.DB
+type userService struct {
+	repo repository.UserRepository
 }
 
-func NewUserRepository(db *sql.DB) UserRepository {
-	&userRepository{db}
+func NewUserService(repo *repository.UserRepository) UserService {
+	return &userService{repo}
 }
 
-func (r *userRepository) CreateProfile(profile *domain.Profile) error {
-	query := `INSERT INTO profiles(id,name,email,password,interests) 
-              VALUES($1,$2,$3,$4,$5)`
-	_, err := r.db.Exec(query, &profile.Id, &profile.Name, &profile.Email,
-		&profile.Password, &profile.Interests)
-	if err != nil {
-		return errors.New("failed to create the user profile" + err.Error())
+func (s *userService) CreateProfile(profile *domain.Profile) error {
+	existingUser, _ := s.repo.GetProfileByEmail(profile.Email)
+	if existingUser != nil {
+		return errors.New("Profile already exists")
 	}
-	return nil
-}
-
-func (r *userRepository) GetProfile(profile *domain.Profile) error {
+	return s.repo.CreateProfile(profile)
 }
