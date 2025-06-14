@@ -1,2 +1,3 @@
 import Navbar from "./Navbar/Navbar";
-export { Navbar };
+import FeedCard from "./FeedCard/FeedCard";
+export { Navbar, FeedCard };
