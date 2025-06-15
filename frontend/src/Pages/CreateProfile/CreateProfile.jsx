@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import "./CreateProfile.css";
 import "../../Components/Card/Card.css";
 import { profileService } from '../../Service/api';
+import { FaInstagram, FaFacebook, FaTwitter } from 'react-icons/fa';
 
 const INTERESTS = [
   'music', 'art', 'vibing', 'reading', 'hiking', 'cooking',
@@ -65,6 +66,26 @@ const CreateProfile = () => {
   const removeLanguage = (lang) => {
     setSelectedLanguages(selectedLanguages.filter(l => l !== lang));
   };
+  const containerStyle = {
+  display: 'flex',
+  justifyContent: 'center', // Center horizontally
+  alignItems: 'center', // Center vertically
+  gap: '20px', // Space between icons
+  margin: '0.3rem auto 0', // Center the container itself
+  padding: 0,
+  width: '100%', // Ensure the container spans the full width
+};
+
+const iconContainerStyle = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+};
+
+const linkStyle = {
+  color: 'inherit', // Inherit color from parent if needed
+  fontSize: '24px', // Adjust icon size as needed
+};
 
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -87,6 +108,8 @@ const CreateProfile = () => {
     }
 
     alert("Profile saved!");
+    localStorage.setItem('userid', "dummy-userid");
+    navigate('/');
   };
 
 
@@ -197,17 +220,31 @@ const CreateProfile = () => {
           {/* Links */}
           <div style={{ marginTop: "1.2rem", width: "100%" }}>
             <strong>Links:</strong>
-            <ul style={{ margin: "0.3rem 0 0 0", padding: 0 }}>
-              {form.instagram && <li><a href={form.instagram} target="_blank" rel="noopener noreferrer">Instagram</a></li>}
-              {form.facebook && <li><a href={form.facebook} target="_blank" rel="noopener noreferrer">Facebook</a></li>}
-              {form.twitter && <li><a href={form.twitter} target="_blank" rel="noopener noreferrer">Twitter</a></li>}
-            </ul>
-          </div>
-          <div className="create-profile-gallery" style={{ marginTop: "1.2rem" }}>
-            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Gallery1" />
-            <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Gallery2" />
-            <img src="https://randomuser.me/api/portraits/women/46.jpg" alt="Gallery3" />
-          </div>
+             <div style={containerStyle}>
+      {form.instagram && (
+        <div style={iconContainerStyle}>
+          <a href={form.instagram} target="_blank" rel="noopener noreferrer" style={linkStyle}>
+            <FaInstagram />
+          </a>
+        </div>
+      )}
+      {form.facebook && (
+        <div style={iconContainerStyle}>
+          <a href={form.facebook} target="_blank" rel="noopener noreferrer" style={linkStyle}>
+            <FaFacebook />
+          </a>
+        </div>
+      )}
+      {form.twitter && (
+        <div style={iconContainerStyle}>
+          <a href={form.twitter} target="_blank" rel="noopener noreferrer" style={linkStyle}>
+            <FaTwitter />
+          </a>
+        </div>
+      )}
+    </div>
+          </div>  
+          
         </div>
       </div>
     </div>
