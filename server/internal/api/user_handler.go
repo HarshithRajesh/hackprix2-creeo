@@ -1,21 +1,27 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/HarshithRajesh/creeo/internal/domain"
+	"github.com/HarshithRajesh/creeo/internal/ml_client"
 	"github.com/HarshithRajesh/creeo/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
 type UserHandler struct {
 	userService service.UserService
+	MLClient    *ml_client.Client
 }
 
-func NewUserHandler(userService service.UserService) *UserHandler {
-	return &UserHandler{userService}
+func NewUserHandler(userService service.UserService, mlClient *ml_client.Client) *UserHandler {
+	return &UserHandler{
+		userService: userService,
+		MLClient:    mlClient,
+	}
 }
 
 func (h *UserHandler) CreateProfile(c *gin.Context) {
@@ -87,4 +93,57 @@ func (h *UserHandler) GetNearbyProfiles(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, profiles)
+}
+
+func (h *UserHandler) SmartProfileSearchHandler(c *gin.Context) {
+	var req domain.SmartSearchRequest // Use the new request struct
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid request payload: " + err.Error(),
+		})
+		return
+	}
+
+	// Get required 'query' parameter
+	// Gin's binding:"required" will already handle this, but an explicit check is fine.
+	if req.Query == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Query field is required in the request body"})
+		return
+	}
+
+	// Defaults for Hyderabad (HITEC City) and radius
+	// Use pointers for optional fields. If nil, use default.
+	userLatitude := 13.4439
+	userLongitude := 77.3892
+	radiusMeters := 10000.0 // 10 km
+
+	if req.UserLatitude != nil {
+		userLatitude = *req.UserLatitude
+	}
+	if req.UserLongitude != nil {
+		userLongitude = *req.UserLongitude
+	}
+	if req.RadiusMeters != nil {
+		radiusMeters = *req.RadiusMeters
+	}
+
+	// Prepare request for ML service (this struct is what the Python service expects)
+	mlRequest := domain.RAGSearchRequest{ // Ensure you're using ml_client.RAGSearchRequest
+		Query:         req.Query,
+		UserLatitude:  userLatitude,
+		UserLongitude: userLongitude,
+		RadiusMeters:  radiusMeters,
+		Limit:         5, // Request top 5 profiles
+	}
+
+	// Call ML service using the injected MLClient
+	ragResponse, err := h.MLClient.SearchProfiles(mlRequest)
+	if err != nil {
+		log.Printf("SmartProfileSearchHandler: Error calling ML service: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to get smart search results: %v", err.Error())})
+		return
+	}
+
+	c.JSON(http.StatusOK, ragResponse)
 }
