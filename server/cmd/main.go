@@ -1,10 +1,13 @@
 package main
 
 import (
+	"log"
+	"os"
 	"time"
 
 	"github.com/HarshithRajesh/creeo/internal/api"
 	"github.com/HarshithRajesh/creeo/internal/config"
+	"github.com/HarshithRajesh/creeo/internal/ml_client"
 	"github.com/HarshithRajesh/creeo/internal/repository"
 	"github.com/HarshithRajesh/creeo/internal/service"
 	"github.com/gin-contrib/cors"
@@ -18,9 +21,17 @@ func health(c *gin.Context) {
 func main() {
 	db := config.ConnectDB()
 
+	mlServiceURL := os.Getenv("ML_SERVICE_URL") // Get ML service URL from env
+	if mlServiceURL == "" {
+		// Default to localhost:8001 if env var not set (good for local dev)
+		mlServiceURL = "http://localhost:8001"
+		log.Printf("ML_SERVICE_URL not set, defaulting to %s", mlServiceURL)
+	}
+
+	mlClient := ml_client.NewClient(mlServiceURL)
 	userRepo := repository.NewUserRepository(db)
 	userService := service.NewUserService(userRepo)
-	userHandler := api.NewUserHandler(userService)
+	userHandler := api.NewUserHandler(userService, mlClient)
 
 	router := gin.Default()
 	config := cors.DefaultConfig()
@@ -38,5 +49,7 @@ func main() {
 	router.GET("/profile", userHandler.GetProfile)
 	router.POST("/location", userHandler.Location)
 	router.GET("/nearby", userHandler.GetNearbyProfiles)
+
+	router.GET("/api/v1/profiles/smart-search", userHandler.SmartProfileSearchHandler)
 	router.Run()
 }
