@@ -49,3 +49,8 @@ type ProfileSummary struct {
 	Languages   string
 	SocialLinks datatypes.JSON
 }
+
+type ConnectionList struct {
+	Id   int
+	Name string
+}
