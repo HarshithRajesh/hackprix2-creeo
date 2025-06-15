@@ -10,6 +10,7 @@ const Geolocation = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [lastPosted, setLastPosted] = useState(0); // Track last successful post
 
+  // Get user's current location
   useEffect(() => {
     const getLocation = () => {
       if (navigator.geolocation) {
@@ -17,10 +18,9 @@ const Geolocation = () => {
           (position) => {
             const location = {
               lat: position.coords.latitude,
-              lng: position.coords.longitude,
+              lng: position.coords.longitude
             };
             setUserLocation(location);
-            console.log('User location:', location);
           },
           (err) => {
             setError(`Geolocation error: ${err.message}`);
@@ -28,8 +28,8 @@ const Geolocation = () => {
           },
           {
             enableHighAccuracy: true,
-            maximumAge: 1000 * 60 * 5,
-            timeout: 10000,
+            maximumAge: 1000 * 60 * 5, // 5 minutes cache
+            timeout: 10000
           }
         );
       } else {
@@ -41,8 +41,10 @@ const Geolocation = () => {
     getLocation();
   }, []);
 
+  // Post user's location to server periodically
   useEffect(() => {
     let intervalId;
+
     if (userLocation) {
       const userId = parseInt(localStorage.getItem('userid'));
       if (!userId || isNaN(userId)) {
@@ -82,51 +84,50 @@ const Geolocation = () => {
     }
 
     return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
+      if (intervalId) clearInterval(intervalId);
     };
   }, [userLocation, lastPosted]);
 
-useEffect(() => {
-  const fetchNearbyPeople = async () => {
-    try {
-      const userId = parseInt(localStorage.getItem('userid'));
-      if (!userId || isNaN(userId)) {
-        setError('User ID not found or invalid in local storage.');
+  // Fetch nearby people
+  useEffect(() => {
+    const fetchNearbyPeople = async () => {
+      try {
+        const userId = parseInt(localStorage.getItem('userid'));
+        if (!userId || isNaN(userId)) {
+          setError('User ID not found or invalid in local storage.');
+          setLoading(false);
+          return;
+        }
+
+        // Ensure location is posted first
+        await locationService.postLocation({
+          id: userId,
+          location: { lng: userLocation.lng, lat: userLocation.lat },
+        });
+        const data = await locationService.fetchNearbyPeople(userId);
+        if (Array.isArray(data)) {
+          setCards(
+            data.map((person) => ({
+              id: person.id,
+              name: `${person.name} (${person.distance.toFixed(2)} km away)`,
+              interests: person.interests || [],
+            }))
+          );
+        } else {
+          setCards([]);
+        }
+      } catch (error) {
+        console.error('Error fetching nearby people:', error);
+        setError(`Failed to fetch nearby people: ${error.message}`);
+      } finally {
         setLoading(false);
-        return;
       }
+    };
 
-      // Ensure location is posted first
-      await locationService.postLocation({
-        id: userId,
-        location: { lng: userLocation.lng, lat: userLocation.lat },
-      });
-      const data = await locationService.fetchNearbyPeople(userId);
-      if (Array.isArray(data)) {
-        setCards(
-          data.map((person) => ({
-            id: person.id,
-            name: `${person.name} (${person.distance.toFixed(2)} km away)`,
-            interests: person.interests || [],
-          }))
-        );
-      } else {
-        setCards([]);
-      }
-    } catch (error) {
-      console.error('Error fetching nearby people:', error);
-      setError(`Failed to fetch nearby people: ${error.message}`);
-    } finally {
-      setLoading(false);
+    if (userLocation) {
+      fetchNearbyPeople();
     }
-  };
-
-  if (userLocation) {
-    fetchNearbyPeople();
-  }
-}, [userLocation]);
+  }, [userLocation]);
 
   if (loading) return <div className="geolocation-container">Loading your location...</div>;
   if (error) return <div className="geolocation-container">Error: {error}</div>;
