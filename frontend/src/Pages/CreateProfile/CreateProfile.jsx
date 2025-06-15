@@ -118,7 +118,6 @@ const linkStyle = {
       <div className="create-profile-container">
         {/* Left: Form */}
         <form onSubmit={handleSubmit} className="create-profile-form">
-          <h2>Edit Profile</h2>
           <ProfileInput
             value={form.name}
             onChange={handleChange("name")}

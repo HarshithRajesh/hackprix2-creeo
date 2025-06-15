@@ -116,7 +116,7 @@ const Profile = () => {
           {!isEditMode && (
             <div className="profile-actions">
               <button className="follow-btn">Wave hi</button>
-              <button className="message-btn">Message</button>
+              <button onClick={() => navigate(`/chats`)} className="message-btn">Message</button>
             </div>
           )}
         </div>
