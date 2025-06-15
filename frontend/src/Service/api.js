@@ -33,4 +33,26 @@ export const healthService = {
     },
 };
 
+export const locationService = {
+    postLocation: async (locationData) => {
+        try {
+            const response = await api.post('/location', locationData);
+            return response.data;
+        } catch (error) {
+            console.error('Error posting location:', error);
+            throw error;
+        }
+    },
+    fetchNearbyPeople: async (userId) => {
+        try {
+            const response = await api.get(`/nearby?radius=2000000&id=${userId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching nearby people:', error);
+            throw error;
+        }
+    },
+};
+
+
 export default api; 

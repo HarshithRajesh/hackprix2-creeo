@@ -6,7 +6,7 @@ const Auth = () => {
     const navigate = useNavigate();
     const handleLoginRedirect = () => {
         localStorage.setItem('token', "dummy-token");
-        localStorage.setItem('userid', "dummy-userid");
+        localStorage.setItem('userid', 1);
         navigate('/');
     };
     const handleRedirect = () => {
