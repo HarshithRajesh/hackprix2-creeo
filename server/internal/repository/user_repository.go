@@ -16,6 +16,7 @@ type UserRepository interface {
 	GetProfileByEmail(email string) (*domain.Profile, error)
 	Location(loc *domain.Location) error
 	GetNearbyProfiles(id int, radius int) ([]*domain.ProfileWithLocation, error)
+	ConnectProfile(id1 int, id2 int) error
 }
 
 type userRepository struct {
@@ -129,4 +130,54 @@ func (r *userRepository) GetNearbyProfiles(id int, radius int) ([]*domain.Profil
 		return nil, fmt.Errorf("error encountered during nearby profiles iteration: %v", err)
 	}
 	return nearbyprofiles, nil
+}
+
+func (r *userRepository) ConnectProfile(id1 int, id2 int) error {
+	if id1 == id2 {
+		return errors.New("A profile cannot connect itself")
+	}
+	query := `
+    INSERT INTO profile_connections (profile_id, connected_profile_id)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+  `
+	result, err := r.db.Exec(query, id1, id2)
+	if err != nil {
+		return errors.New("failed to create connection" + err.Error())
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("could not get rows affected: %w", err)
+	}
+	if rowsAffected == 0 {
+		return errors.New("connection already exists")
+	}
+	return nil
+}
+
+func (r *userRepository) ListOfConnections(id int)([]*domain.ProfileSummary. error ){
+   query := `
+        SELECT p.id, p.name
+        FROM profile_connections pc
+        JOIN profiles p ON pc.connected_profile_id = p.id
+        WHERE pc.profile_id = $1
+    `
+    rows, err := r.DB.Query(query, id)
+    if err != nil {
+        return nil, fmt.Errorf("failed to query connected profiles: %w", err)
+    }
+    defer rows.Close()
+
+    var profiles []*domain.ProfileSummary
+    for rows.Next() {
+        var p Profile
+        if err := rows.Scan(&p.ID, &p.Name); err != nil {
+            return nil, fmt.Errorf("failed to scan profile: %w", err)
+        }
+        profiles = append(profiles, p)
+    }
+    if err := rows.Err(); err != nil {
+        return nil, fmt.Errorf("row iteration error: %w", err)
+    }
+    return profiles, nil
 }

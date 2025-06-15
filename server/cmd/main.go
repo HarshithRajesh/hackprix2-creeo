@@ -49,6 +49,7 @@ func main() {
 	router.GET("/profile", userHandler.GetProfile)
 	router.POST("/location", userHandler.Location)
 	router.GET("/nearby", userHandler.GetNearbyProfiles)
+	router.POST("/connect", userHandler.ConnectProfile)
 
 	router.GET("/api/v1/profiles/smart-search", userHandler.SmartProfileSearchHandler)
 	router.Run()

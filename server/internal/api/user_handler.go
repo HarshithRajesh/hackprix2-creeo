@@ -147,3 +147,26 @@ func (h *UserHandler) SmartProfileSearchHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, ragResponse)
 }
+
+func (h *UserHandler) ConnectProfile(c *gin.Context) {
+	id1Str := c.Query("id1")
+	id2Str := c.Query("id2")
+
+	id1, err := strconv.Atoi(id1Str)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id 1"})
+		return
+	}
+	id2, err := strconv.Atoi(id2Str)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id 2"})
+		return
+	}
+	err = h.userService.ConnectProfile(id1, id2)
+	if err != nil {
+		log.Printf("Error %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Couldnt Connect", "Error messages:": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"message": "Connected"})
+}
