@@ -27,10 +27,10 @@ func NewUserRepository(db *sql.DB) UserRepository {
 }
 
 func (r *userRepository) CreateProfile(profile *domain.Profile) error {
-	query := `INSERT INTO profiles(name,email,password,interests) 
+	query := `INSERT INTO profiles(name,email,password,interest,description,age,pronouns,languages,socail_links)  
               VALUES($1,$2,$3,$4)`
 	_, err := r.db.Exec(query, &profile.Name, &profile.Email,
-		&profile.Password, &profile.Interests)
+		&profile.Password, &profile.Interests, &profile.Description, &profile.Age, &profile.Pronouns, &profile.Languages, &profile.SocialLinks)
 	if err != nil {
 		return errors.New("failed to create the user profile" + err.Error())
 	}
@@ -39,9 +39,9 @@ func (r *userRepository) CreateProfile(profile *domain.Profile) error {
 
 func (r *userRepository) GetProfile(id int) (*domain.Profile, error) {
 	var prof domain.Profile
-	query := `SELECT id,name,interests FROM profiles WHERE id=$1`
+	query := `SELECT id,name,interests,description,age,pronouns,languages,socail_links FROM profiles WHERE id=$1`
 	row := r.db.QueryRow(query, id)
-	err := row.Scan(&prof.Id, &prof.Name, &prof.Interests)
+	err := row.Scan(&prof.Id, &prof.Name, &prof.Interests, &prof.Description, &prof.Age, &prof.Pronouns, &prof.Languages, &prof.SocialLinks)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("Profile not found")
