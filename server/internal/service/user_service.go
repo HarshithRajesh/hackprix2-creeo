@@ -14,6 +14,7 @@ type UserService interface {
 	Location(loc *domain.Location) error
 	GetNearbyProfiles(id int, radius int) ([]*domain.ProfileWithLocation, error)
 	ConnectProfile(id1 int, id2 int) error
+	ListOfConnections(id int) ([]*domain.ConnectionList, error)
 }
 
 type userService struct {
@@ -63,4 +64,14 @@ func (s *userService) ConnectProfile(id1 int, id2 int) error {
 		return errors.New("Connection not happening !!" + err.Error())
 	}
 	return nil
+}
+
+func (s *userService) ListOfConnections(id int) ([]*domain.ConnectionList, error) {
+	// var prof []*domain.ProfileSummary
+
+	prof, err := s.repo.ListOfConnections(id)
+	if err != nil {
+		return nil, errors.New("Connection not happening !!" + err.Error())
+	}
+	return prof, nil
 }

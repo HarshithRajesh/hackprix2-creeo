@@ -170,3 +170,21 @@ func (h *UserHandler) ConnectProfile(c *gin.Context) {
 	}
 	c.JSON(200, gin.H{"message": "Connected"})
 }
+
+func (h *UserHandler) ListOfConnections(c *gin.Context) {
+	idStr := c.Query("id")
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id"})
+		return
+	}
+	prof, err := h.userService.ListOfConnections(id)
+	if err != nil {
+		log.Printf("Error %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch nearby profiles", "Error messages:": err.Error()})
+		return
+
+	}
+	c.JSON(http.StatusOK, prof)
+}

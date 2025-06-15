@@ -17,6 +17,7 @@ type UserRepository interface {
 	Location(loc *domain.Location) error
 	GetNearbyProfiles(id int, radius int) ([]*domain.ProfileWithLocation, error)
 	ConnectProfile(id1 int, id2 int) error
+	ListOfConnections(id int) ([]*domain.ConnectionList, error)
 }
 
 type userRepository struct {
@@ -155,29 +156,55 @@ func (r *userRepository) ConnectProfile(id1 int, id2 int) error {
 	return nil
 }
 
-func (r *userRepository) ListOfConnections(id int)([]*domain.ProfileSummary. error ){
-   query := `
+//	func (r *userRepository) ListOfConnections(id int) ([]*domain.ProfileSummary, error) {
+//		query := `
+//	        SELECT p.id, p.name
+//	        FROM profile_connections pc
+//	        JOIN profiles p ON pc.connected_profile_id = p.id
+//	        WHERE pc.profile_id = $1
+//	    `
+//		rows, err := r.db.Query(query, id)
+//		if err != nil {
+//			return nil, fmt.Errorf("failed to query connected profiles: %w", err)
+//		}
+//		defer rows.Close()
+//
+//		var profiles []*domain.ProfileSummary
+//		for rows.Next() {
+//			var p *domain.ProfileSummary
+//			if err := rows.Scan(&p.Id, &p.Name); err != nil {
+//				return nil, fmt.Errorf("failed to scan profile: %w", err)
+//			}
+//			profiles = append(profiles, p)
+//		}
+//		if err := rows.Err(); err != nil {
+//			return nil, fmt.Errorf("row iteration error: %w", err)
+//		}
+//		return profiles, nil
+//	}
+func (r *userRepository) ListOfConnections(id int) ([]*domain.ConnectionList, error) {
+	query := `
         SELECT p.id, p.name
         FROM profile_connections pc
         JOIN profiles p ON pc.connected_profile_id = p.id
         WHERE pc.profile_id = $1
     `
-    rows, err := r.DB.Query(query, id)
-    if err != nil {
-        return nil, fmt.Errorf("failed to query connected profiles: %w", err)
-    }
-    defer rows.Close()
+	rows, err := r.db.Query(query, id)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query connected profiles: %w", err)
+	}
+	defer rows.Close()
 
-    var profiles []*domain.ProfileSummary
-    for rows.Next() {
-        var p Profile
-        if err := rows.Scan(&p.ID, &p.Name); err != nil {
-            return nil, fmt.Errorf("failed to scan profile: %w", err)
-        }
-        profiles = append(profiles, p)
-    }
-    if err := rows.Err(); err != nil {
-        return nil, fmt.Errorf("row iteration error: %w", err)
-    }
-    return profiles, nil
+	var profiles []*domain.ConnectionList
+	for rows.Next() {
+		p := new(domain.ConnectionList)
+		if err := rows.Scan(&p.Id, &p.Name); err != nil {
+			return nil, fmt.Errorf("failed to scan profile: %w", err)
+		}
+		profiles = append(profiles, p)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("row iteration error: %w", err)
+	}
+	return profiles, nil
 }
