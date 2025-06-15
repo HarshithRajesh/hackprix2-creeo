@@ -110,11 +110,7 @@ const Geolocation = () => {
   return (
     <div className="geolocation-container">
       <h1>Nearby People</h1>
-      {userLocation && (
-        <div className="location-info">
-          Your location: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}
-        </div>
-      )}
+      {userLocation}
       
       <div className="cards-container">
         {cards.length > 0 ? (
