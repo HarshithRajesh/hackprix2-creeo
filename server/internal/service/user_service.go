@@ -13,6 +13,8 @@ type UserService interface {
 	GetProfile(id int) (*domain.ProfileSummary, error)
 	Location(loc *domain.Location) error
 	GetNearbyProfiles(id int, radius int) ([]*domain.ProfileWithLocation, error)
+	ConnectProfile(id1 int, id2 int) error
+	ListOfConnections(id int) ([]*domain.ConnectionList, error)
 }
 
 type userService struct {
@@ -54,4 +56,22 @@ func (s *userService) GetNearbyProfiles(id int, radius int) ([]*domain.ProfileWi
 		return nil, fmt.Errorf("service failed to fetch nearby profiles: %w", err)
 	}
 	return results, nil
+}
+
+func (s *userService) ConnectProfile(id1 int, id2 int) error {
+	err := s.repo.ConnectProfile(id1, id2)
+	if err != nil {
+		return errors.New("Connection not happening !!" + err.Error())
+	}
+	return nil
+}
+
+func (s *userService) ListOfConnections(id int) ([]*domain.ConnectionList, error) {
+	// var prof []*domain.ProfileSummary
+
+	prof, err := s.repo.ListOfConnections(id)
+	if err != nil {
+		return nil, errors.New("Connection not happening !!" + err.Error())
+	}
+	return prof, nil
 }
