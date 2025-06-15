@@ -12,7 +12,7 @@ import (
 
 type UserRepository interface {
 	CreateProfile(profile *domain.Profile) error
-	GetProfile(id int) (*domain.Profile, error)
+	GetProfile(id int) (*domain.ProfileSummary, error)
 	GetProfileByEmail(email string) (*domain.Profile, error)
 	Location(loc *domain.Location) error
 	GetNearbyProfiles(id int, radius int) ([]*domain.ProfileWithLocation, error)
@@ -27,8 +27,8 @@ func NewUserRepository(db *sql.DB) UserRepository {
 }
 
 func (r *userRepository) CreateProfile(profile *domain.Profile) error {
-	query := `INSERT INTO profiles(name,email,password,interest,description,age,pronouns,languages,socail_links)  
-              VALUES($1,$2,$3,$4)`
+	query := `INSERT INTO profiles(name,email,password,interests,description,age,pronouns,languages,social_links)  
+              VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`
 	_, err := r.db.Exec(query, &profile.Name, &profile.Email,
 		&profile.Password, &profile.Interests, &profile.Description, &profile.Age, &profile.Pronouns, &profile.Languages, &profile.SocialLinks)
 	if err != nil {
@@ -37,9 +37,10 @@ func (r *userRepository) CreateProfile(profile *domain.Profile) error {
 	return nil
 }
 
-func (r *userRepository) GetProfile(id int) (*domain.Profile, error) {
-	var prof domain.Profile
-	query := `SELECT id,name,interests,description,age,pronouns,languages,socail_links FROM profiles WHERE id=$1`
+func (r *userRepository) GetProfile(id int) (*domain.ProfileSummary, error) {
+	var prof domain.ProfileSummary
+	query := `SELECT id,name,interests,description,age,pronouns,languages,social_links FROM profiles WHERE id=$1`
+
 	row := r.db.QueryRow(query, id)
 	err := row.Scan(&prof.Id, &prof.Name, &prof.Interests, &prof.Description, &prof.Age, &prof.Pronouns, &prof.Languages, &prof.SocialLinks)
 	if err != nil {

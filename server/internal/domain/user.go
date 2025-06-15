@@ -38,3 +38,14 @@ type ProfileWithLocation struct {
 	Location  GeoPoint       `json:"location"`
 	Distance  float64        `json:"distance"` // meters
 }
+
+type ProfileSummary struct {
+	Id          int
+	Name        string
+	Interests   string
+	Description string
+	Age         int
+	Pronouns    string
+	Languages   string
+	SocialLinks datatypes.JSON
+}

@@ -10,7 +10,7 @@ import (
 
 type UserService interface {
 	CreateProfile(profile *domain.Profile) error
-	GetProfile(id int) (*domain.Profile, error)
+	GetProfile(id int) (*domain.ProfileSummary, error)
 	Location(loc *domain.Location) error
 	GetNearbyProfiles(id int, radius int) ([]*domain.ProfileWithLocation, error)
 }
@@ -31,8 +31,8 @@ func (s *userService) CreateProfile(profile *domain.Profile) error {
 	return s.repo.CreateProfile(profile)
 }
 
-func (s *userService) GetProfile(id int) (*domain.Profile, error) {
-	var prof *domain.Profile
+func (s *userService) GetProfile(id int) (*domain.ProfileSummary, error) {
+	var prof *domain.ProfileSummary
 	prof, err := s.repo.GetProfile(id)
 	if err != nil {
 		return nil, errors.New("Profile not exists")
