@@ -45,7 +45,7 @@ export const locationService = {
     },
     fetchNearbyPeople: async (userId) => {
         try {
-            const response = await api.get(`/nearby?radius=20000&id=${userId}`);
+            const response = await api.get(`/nearby?radius=2000000&id=${userId}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching nearby people:', error);

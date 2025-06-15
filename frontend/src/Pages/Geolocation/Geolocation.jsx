@@ -51,13 +51,17 @@ const Geolocation = () => {
       }
 
       const postLocationData = async () => {
+        if (!userLocation) {
+          console.error('User location is not available.');
+          return;
+        }
         try {
           const locationData = {
             id: userId,
             location: {
               lng: userLocation.lng,
               lat: userLocation.lat,
-            },
+            },  
           };
           console.log(locationData)
           await locationService.postLocation(locationData);
@@ -82,7 +86,7 @@ const Geolocation = () => {
   useEffect(() => {
     const fetchNearbyPeople = async () => {
       try {
-        const userId = localStorage.getItem('userid'); 
+        const userId = parseInt(localStorage.getItem('userid')); 
         if (!userId) {
           setError("User ID not found in local storage.");
           setLoading(false);

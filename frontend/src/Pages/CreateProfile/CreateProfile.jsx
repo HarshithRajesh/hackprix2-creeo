@@ -108,7 +108,7 @@ const linkStyle = {
     }
 
     alert("Profile saved!");
-    localStorage.setItem('userid', "dummy-userid");
+    localStorage.setItem('userid', 1);
     navigate('/');
   };
 
