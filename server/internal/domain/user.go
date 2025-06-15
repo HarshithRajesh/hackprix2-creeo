@@ -7,11 +7,16 @@ import (
 )
 
 type Profile struct {
-	Id        int            `gorm:"primaryKey;autoIncrement"`
-	Name      string         `gorm:"not null"`
-	Email     string         `gorm:"unique;not null"`
-	Password  string         `gorm:"not null"`
-	Interests datatypes.JSON `gorm:"type:jsonb;not null"`
+	Id          int            `gorm:"primaryKey;autoIncrement"`
+	Name        string         `gorm:"not null"`
+	Email       string         `gorm:"unique;not null"`
+	Password    string         `gorm:"not null"`
+	Interests   datatypes.JSON `gorm:"type:jsonb;not null"`
+	Description string         `gorm:"not null"`
+	Age         int            `gorm:"not null"`
+	Pronouns    string         `gorm:"not null"`
+	Languages   string         `gorm:"not null"`
+	SocialLinks datatypes.JSON `gorm:"type:jsonb;not null"`
 }
 
 type GeoPoint struct {
@@ -32,4 +37,15 @@ type ProfileWithLocation struct {
 	UpdatedAt time.Time      `json:"updatedAt"`
 	Location  GeoPoint       `json:"location"`
 	Distance  float64        `json:"distance"` // meters
+}
+
+type ProfileSummary struct {
+	Id          int
+	Name        string
+	Interests   string
+	Description string
+	Age         int
+	Pronouns    string
+	Languages   string
+	SocialLinks datatypes.JSON
 }
