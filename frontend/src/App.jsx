@@ -1,12 +1,12 @@
-import {  BrowserRouter as Router,  Routes,  Route,  Navigate,  useLocation,} from 'react-router-dom';
-import {  Home,  Chats,  Geolocation,  Menu,  Profile,  Auth,  CreateProfile,} from './Pages';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Home, Chats, Geolocation, Menu, Profile, Auth, CreateProfile } from './Pages';
 import { Navbar } from './Components';
 import Header from './Components/Header/Header';
 import './App.css';
 
 // Auth utility
 const isAuthenticated = () => {
-  return !!localStorage.getItem('token')&& localStorage.getItem('userid');
+  return !!localStorage.getItem('token') && localStorage.getItem('userid');
 };
 
 // Private route component
@@ -29,7 +29,6 @@ function App() {
 
 function AppRoutes() {
   const location = useLocation();
-
   const hideLayoutPaths = ['/auth', '/create-profile'];
   const isLayoutHidden = hideLayoutPaths.includes(location.pathname);
 
@@ -94,6 +93,14 @@ function AppRoutes() {
         />
         <Route
           path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile/:userid"
           element={
             <PrivateRoute>
               <Profile />
