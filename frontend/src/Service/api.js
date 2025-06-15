@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'; // Fallback for safety
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -17,6 +17,25 @@ export const profileService = {
     } catch (error) {
       console.error('Error creating profile:', error.response?.data || error.message);
       throw error;
+    }
+  },
+  getProfile: async (userId) => {
+    try {
+      const response = await api.get(`/profile`, { params: { id: userId } });
+      const profile = response.data.message;
+      // Parse Interests if it's a stringified array
+      if (typeof profile.Interests === 'string') {
+        try {
+          profile.Interests = JSON.parse(profile.Interests);
+        } catch (e) {
+          console.error('Failed to parse Interests:', e);
+          profile.Interests = [];
+        }
+      }
+      return profile;
+    } catch (error) {
+      console.error('Error fetching profile:', error.response?.data || error.message);
+      throw error.response?.data || { error: 'Failed to fetch profile' };
     }
   },
 };
@@ -36,7 +55,6 @@ export const healthService = {
 export const locationService = {
   postLocation: async (locationData) => {
     try {
-      // Ensure numeric values for coordinates
       const sanitizedData = {
         id: parseInt(locationData.id),
         location: {
@@ -55,11 +73,16 @@ export const locationService = {
     try {
       const response = await api.get(`/nearby`, {
         params: {
-          radius: 10000,
+          radius: 50000,
           id: parseInt(userId),
         },
       });
-      return response.data;
+      // Parse Interests for each person if stringified
+      const data = response.data.map((person) => ({
+        ...person,
+        interests: typeof person.interests === 'string' ? JSON.parse(person.interests) : person.interests || [],
+      }));
+      return data;
     } catch (error) {
       console.error('Error fetching nearby people:', error.response?.data || error.message);
       throw error;

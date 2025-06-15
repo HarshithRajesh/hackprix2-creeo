@@ -5,5 +5,6 @@ import ChatList from "./ChatList/ChatList";
 import ChatWindow from "./ChatWindow/ChatWindow";
 import MessageInput from "./MessageInput/MessageInput";
 import ProfileInput from "./Profileinput/Profileinput";
-export { Card,FeedCard, Navbar, ChatList, ChatWindow, MessageInput, ProfileInput };
+import Profiles from "./Profiles/Profiles";
+export { Card,FeedCard, Navbar, ChatList, ChatWindow, MessageInput, ProfileInput, Profiles };
 
