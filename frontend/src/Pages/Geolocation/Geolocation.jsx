@@ -8,7 +8,6 @@ const Geolocation = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
-  const [lastPosted, setLastPosted] = useState(0); // Track last successful post
 
   // Get user's current location
   useEffect(() => {
@@ -23,7 +22,7 @@ const Geolocation = () => {
             setUserLocation(location);
           },
           (err) => {
-            setError(`Geolocation error: ${err.message}`);
+            setError(err.message);
             setLoading(false);
           },
           {
@@ -33,7 +32,7 @@ const Geolocation = () => {
           }
         );
       } else {
-        setError('Geolocation is not supported by this browser.');
+        setError("Geolocation is not supported by this browser.");
         setLoading(false);
       }
     };
@@ -44,92 +43,68 @@ const Geolocation = () => {
   // Post user's location to server periodically
   useEffect(() => {
     let intervalId;
+    
+    const postLocation = async () => {
+      if (!userLocation) return;
+      
+      try {
+        const userId = parseInt(localStorage.getItem('userid'));
+        if (!userId) return;
+
+        await locationService.postLocation({
+          id: userId,
+          location: userLocation
+        });
+      } catch (error) {
+        console.error('Error posting location:', error);
+      }
+    };
 
     if (userLocation) {
-      const userId = parseInt(localStorage.getItem('userid'));
-      if (!userId || isNaN(userId)) {
-        setError('User ID not found or invalid in local storage.');
-        setLoading(false);
-        return;
-      }
-
-      const postLocationData = async () => {
-        const now = Date.now();
-        // Skip if posted recently (within 5 seconds)
-        if (now - lastPosted < 5000) {
-          return;
-        }
-
-        try {
-          const locationData = {
-            id: userId,
-            location: {
-              lng: userLocation.lng,
-              lat: userLocation.lat,
-            },
-          };
-          console.log('Posting location:', locationData);
-          await locationService.postLocation(locationData);
-          console.log('Location posted successfully');
-          setLastPosted(now); // Update last posted time
-        } catch (error) {
-          console.error('Error posting location:', error);
-          setError(`Failed to post location: ${error.message}`);
-        }
-      };
-
-      // Post location immediately and then every 5 seconds
-      postLocationData();
-      intervalId = setInterval(postLocationData, 5000);
+      postLocation(); // Post immediately
+      intervalId = setInterval(postLocation, 10000); // Then every 10 seconds
     }
 
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [userLocation, lastPosted]);
+  }, [userLocation]);
 
   // Fetch nearby people
   useEffect(() => {
-    const fetchNearbyPeople = async () => {
+    const fetchNearby = async () => {
       try {
         const userId = parseInt(localStorage.getItem('userid'));
-        if (!userId || isNaN(userId)) {
-          setError('User ID not found or invalid in local storage.');
+        if (!userId) {
+          setError("User ID not found in local storage.");
           setLoading(false);
           return;
         }
 
-        // Ensure location is posted first
-        await locationService.postLocation({
-          id: userId,
-          location: { lng: userLocation.lng, lat: userLocation.lat },
-        });
-        const data = await locationService.fetchNearbyPeople(userId);
-        if (Array.isArray(data)) {
-          setCards(
-            data.map((person) => ({
-              id: person.id,
-              name: `${person.name} (${person.distance.toFixed(2)} km away)`,
-              interests: person.interests || [],
-            }))
-          );
-        } else {
-          setCards([]);
-        }
+        const people = await locationService.fetchNearbyPeople(userId);
+        setCards(people.map(person => ({
+          id: person.id,
+          name: person.name,
+          age: person.age || 25, // Default age if not provided
+          interests: person.interests,
+          distance: person.distance
+        })));
       } catch (error) {
         console.error('Error fetching nearby people:', error);
-        setError(`Failed to fetch nearby people: ${error.message}`);
+        setError(error.message);
       } finally {
         setLoading(false);
       }
     };
 
     if (userLocation) {
-      fetchNearbyPeople();
+      fetchNearby();
+      const refreshInterval = setInterval(fetchNearby, 30000); // Refresh every 30 seconds
+      return () => clearInterval(refreshInterval);
     }
   }, [userLocation]);
 
-  if (loading) return <div className="geolocation-container">Loading your location...</div>;
+  if (loading) return <div className="geolocation-container">Loading...</div>;
   if (error) return <div className="geolocation-container">Error: {error}</div>;
 
   return (
@@ -137,20 +112,26 @@ const Geolocation = () => {
       <h1>Nearby People</h1>
       {userLocation && (
         <div className="location-info">
-          <p>
-            Your location: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}
-          </p>
+          Your location: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}
         </div>
       )}
-      {cards.length > 0 ? (
-        <div className="cards-container">
-          {cards.map((card) => (
-            <Card key={card.id} name={card.name} interests={card.interests} />
-          ))}
-        </div>
-      ) : (
-        <p className="no-people-message">No people nearby.</p>
-      )}
+      
+      <div className="cards-container">
+        {cards.length > 0 ? (
+          cards.map(person => (
+            <Card
+              key={person.id}
+              id={person.id}
+              name={person.name}
+              age={person.age}
+              interests={person.interests}
+              distance={person.distance}
+            />
+          ))
+        ) : (
+          <p className="no-people">No people nearby</p>
+        )}
+      </div>
     </div>
   );
 };
