@@ -2,11 +2,8 @@ import React, { useState } from 'react';
 import './Profile.css';
 
 const tabs = [
-  { label: 'Posts', icon: 'fas fa-th' },
-  { label: 'Photos', icon: 'fas fa-image' },
-  { label: 'Videos', icon: 'fas fa-video' },
-  { label: 'Follows', icon: 'fas fa-user-friends' },
-  { label: 'Music', icon: 'fas fa-music' },
+  { label: 'Friends', icon: 'fas fa-th' },
+  { label: 'Posts', icon: 'fas fa-user-friends' }
 ];
 
 const photos = [
@@ -25,11 +22,11 @@ const Profile = () => {
       <div className="profile-header">
         <img className="profile-avatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" />
         <div className="profile-info">
-          <h2>Ruth Esther Crisp</h2>
+          <h2>LEE</h2>
           <span className="profile-badge">Master degree</span>
           <p className="profile-desc">Data science engineer, communicator, kind and ethical.</p>
           <div className="profile-actions">
-            <button className="follow-btn">+ Following</button>
+            <button className="follow-btn">Wave hi</button>
             <button className="message-btn">Message</button>
           </div>
         </div>
