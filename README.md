@@ -33,4 +33,3 @@ PostgreSQL Database:
 Stores user profiles, interests, and their embeddings.
 pgvector Extension: Enables efficient similarity search on vector embeddings.
 PostGIS Extension: Provides powerful geospatial functions for location-based queries.
-
