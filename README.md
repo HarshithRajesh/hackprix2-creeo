@@ -1,4 +1,4 @@
-Creeoo
+Creeo
 Intelligent Profile Search
 Overview
 Smart Connect is a sophisticated application designed to revolutionize how you find and connect with individuals based on highly specific interests and precise geographical locations. Moving beyond basic keyword searches, it leverages advanced AI and geospatial capabilities to help users discover exactly who they need, where they need them.
